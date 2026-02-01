@@ -6,23 +6,7 @@ A TypeScript implementation demonstrating End-to-End encryption principles inspi
 
 ![WhatsApp E2E Architecture](./image.png)
 
-## How It Works
 
-### Phase 1: Client Encryption
-- **Client** encrypts messages with private key before sending
-- **Connection Server** receives only ciphertext (never decrypts)
-- Server forwards encrypted messages blindly
-
-### Phase 2: Offline Message Queue
-- **Message Router** checks if receiver is online
-- If offline: queues encrypted message
-- If online: delivers immediately
-- Server remains blind to content in both cases
-
-### Phase 3: Receiver Decryption
-- **Receiver** holds private key
-- Decryption happens only on receiver's device
-- Server cannot decrypt even if compromised
 
 ## Key Principles
 
