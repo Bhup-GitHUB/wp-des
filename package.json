@@ -1,0 +1,19 @@
+{
+  "name": "whatsapp-e2e-demo",
+  "version": "1.0.0",
+  "description": "WhatsApp E2E Encryption Demo - Phase 1",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  },
+  "keywords": ["encryption", "e2e", "whatsapp", "demo"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
