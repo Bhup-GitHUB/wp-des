@@ -5,8 +5,15 @@ interface EncryptedMessage {
     timestamp: number;
 }
 
+type MessageDeliveryCallback = (ciphertext: string, senderId: string) => void;
+
 const messageQueue: Map<string, EncryptedMessage[]> = new Map();
 const onlineUsers: Set<string> = new Set();
+const receiverCallbacks: Map<string, MessageDeliveryCallback> = new Map();
+
+export function registerReceiver(userId: string, callback: MessageDeliveryCallback): void {
+    receiverCallbacks.set(userId, callback);
+}
 
 export function setUserOnline(userId: string): void {
     onlineUsers.add(userId);
@@ -28,17 +35,22 @@ function deliverQueuedMessages(userId: string): void {
     if (messages && messages.length > 0) {
         console.log(`[Message Router] Delivering ${messages.length} queued message(s) to ${userId}`);
         messages.forEach(msg => {
-            deliver(msg.ciphertext, userId);
+            deliver(msg.ciphertext, msg.from, userId);
         });
         messageQueue.delete(userId);
     }
     console.log();
 }
 
-function deliver(ciphertext: string, recipientId: string): void {
+function deliver(ciphertext: string, senderId: string, recipientId: string): void {
     console.log(`[Message Router] Delivering to ${recipientId}`);
     console.log(`[Message Router] Ciphertext: ${ciphertext}`);
     console.log(`[Message Router] Server still blind to content\n`);
+
+    const callback = receiverCallbacks.get(recipientId);
+    if (callback) {
+        callback(ciphertext, senderId);
+    }
 }
 
 export function routeMessage(
@@ -55,7 +67,7 @@ export function routeMessage(
 
     if (isUserOnline(recipientId)) {
         console.log('[Message Router] Receiver is online, delivering immediately');
-        deliver(ciphertext, recipientId);
+        deliver(ciphertext, senderId, recipientId);
     } else {
         console.log('[Message Router] Receiver is offline, queueing message');
 
@@ -76,4 +88,3 @@ export function getMessagesForUser(userId: string): EncryptedMessage[] {
 export function clearMessagesForUser(userId: string): void {
     messageQueue.delete(userId);
 }
-
